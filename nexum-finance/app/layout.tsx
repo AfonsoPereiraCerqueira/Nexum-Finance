@@ -3,7 +3,7 @@ import { Sora, Inter } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ui/theme-provider"
-import Navbar from "@/components/ui/navbar";
+import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 
 const sora = Sora({
@@ -20,6 +20,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Nexum Finance",
   description: "Nexum Finance",
+  icons: {
+    icon: "/nexum-png.svg",
+  },
 };
 
 export default function RootLayout({
@@ -28,11 +31,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const options = [
-    { name: "home", label: "Home", href: "/" },
-    { name: "about", label: "About", href: "/about" },
-    { name: "contact", label: "Contact", href: "/contact" },
-  ]
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -44,11 +42,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange>
           <TooltipProvider>
-            <Navbar
-            
-            options={options}
-
-            />
+            <Navbar />
             {children}
             <Footer />
           </TooltipProvider>

@@ -3,7 +3,7 @@ import { Sora, Inter } from "next/font/google";
 import "../globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ui/theme-provider"
-import Navbar from "@/components/ui/navbar";
+import Navbar from "@/components/navbar";
 
 const sora = Sora({
   subsets: ['latin'],
