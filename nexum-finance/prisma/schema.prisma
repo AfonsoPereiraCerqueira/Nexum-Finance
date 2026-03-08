@@ -1,11 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
 }
 
 datasource db {
@@ -13,37 +7,32 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  password      String
-  image         String?
-  plan          String    @default("STANDARD") // STANDARD, PREMIUM, BLACK
-  createdAt     DateTime  @default(now())
-  
-  // Um utilizador tem uma conta bancária
-  account       Account?
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  image     String?
+  plan      String   @default("STANDARD")
+  createdAt DateTime @default(now())
+  account   Account?
 }
 
 model Account {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  balance     Float    @default(0.0)
-  accountNumber String @unique
-  
-  // Uma conta tem várias transações
-  transactions Transaction[]
+  id            String        @id @default(cuid())
+  userId        String        @unique
+  balance       Float         @default(0.0)
+  accountNumber String        @unique
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions  Transaction[]
 }
 
 model Transaction {
   id          String   @id @default(cuid())
   amount      Float
-  type        String   // "DEPOSIT", "WITHDRAWAL", "TRANSFER"
+  type        String
   description String?
-  category    String   // "Food", "Transport", "Shopping", etc.
+  category    String
   createdAt   DateTime @default(now())
-  
   accountId   String
   account     Account  @relation(fields: [accountId], references: [id])
 }
