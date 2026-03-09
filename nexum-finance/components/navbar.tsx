@@ -56,12 +56,15 @@ export default function Navbar() {
 
       {/* 3. LADO DIREITO: Login + Sheet para Mobile */}
       <div className="flex-1 flex justify-end gap-4 items-center">
-        <Button
-          variant="ghost"
-          className="hidden md:flex text-sm font-medium transition-all hover:scale-105 hover:text-emerald-500"
-        >
-          Login
-        </Button>
+        <a href="/login">
+          <Button
+            variant="ghost"
+            className="hidden md:flex text-sm font-medium transition-all hover:scale-105 hover:text-emerald-500"
+          >
+            
+              Login
+          </Button>
+        </a>
 
         {/* MENU MOBILE (Sheet do shadcn) */}
         <div className="md:hidden">
