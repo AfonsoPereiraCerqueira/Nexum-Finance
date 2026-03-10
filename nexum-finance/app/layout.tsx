@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ui/theme-provider"
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import Providers from "./lib/Providers";
 
 const sora = Sora({
   subsets: ['latin'],
@@ -25,12 +26,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
 
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -42,9 +40,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange>
           <TooltipProvider>
-            <Navbar />
-            {children}
-            <Footer />
+            <Providers>
+              <Navbar />
+              {children}
+              <Footer />
+            </Providers>
           </TooltipProvider>
         </ThemeProvider>
       </body>

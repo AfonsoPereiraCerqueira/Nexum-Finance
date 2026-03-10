@@ -1,11 +1,12 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/app/lib/db";
 import bcrypt from "bcrypt";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(db),
+    secret: process.env.NEXTAUTH_SECRET,
     providers: [
         CredentialsProvider({
             name: "credentials",
@@ -23,15 +24,15 @@ const handler = NextAuth({
                 });
 
                 if (!user) {
-                    throw new Error("User not found.");
+                    throw new Error("Email or Password incorrect.");
                 }
 
                 const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
                 if (!isPasswordCorrect) {
-                    throw new Error("Password or email incorrect");
+                    throw new Error("Email or Password incorrect.");
                 }
 
-                return user
+                return user;
             },
         }),
     ],
@@ -42,14 +43,22 @@ const handler = NextAuth({
         signIn: "/login",
     },
 callbacks: {
+    async jwt({ token, user }) {
+        if (user) {
+            token.id = user.id;
+        }
+        return token;
+    },
     async session({ session, token }) {
-      if (token && session.user) {
+      if (session.user) {
         // @ts-ignore
-        session.user.id = token.sub;
+        session.user.id = token.id;
       }
       return session;
     },
   },
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

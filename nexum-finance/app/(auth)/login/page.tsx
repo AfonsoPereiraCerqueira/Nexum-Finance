@@ -1,14 +1,44 @@
-"use client"
+"use client";
 
-import { useActionState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { registerUser } from "@/app/lib/actions";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const [state, formAction, isPending] = useActionState(registerUser, null);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsPending(true);
+    setError(null);
+
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    // O signIn vai chamar o 'authorize' da sua route.ts
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false, // Importante para controlarmos o erro aqui no cliente
+    });
+
+    if (result?.error) {
+      // O erro que você deu 'throw' no authorize aparece aqui
+      setError("Email ou senha incorretos.");
+      setIsPending(false);
+    } else {
+      // Sucesso! O cookie foi criado e o ID está na sessão.
+      router.push("/dashboard");
+      router.refresh(); // Garante que o layout pegue a nova sessão
+    }
+  }
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-6">
@@ -19,32 +49,26 @@ export default function Login() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={formAction} className="space-y-4">
-            <Input
-              name="email"
-              type="email"
-              placeholder="Email"
-              className="bg-white/5 border-white/10"
-              required
-            />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input name="email" type="email" placeholder="Email" required />
             <Input
               name="password"
               type="password"
               placeholder="Password"
-              className="bg-white/5 border-white/10"
               required
             />
-            <div className="flex items-center gap-2">
-                <Checkbox id="terms" className="bg-white/5 border-white/10" required />
-                <label htmlFor="terms" className="text-sm text-gray-400">
-                    I agree to the{" "}<a href="#" className="text-emerald-500 hover:underline">
-                    Terms and Conditions
-                    </a>
-                </label>
-            </div>
-            {state?.error && <p className="text-red-500 text-sm">{state.error}</p>}
-            <Button className="w-full bg-emerald-500 text-black hover:bg-emerald-400 font-bold">
-              {isPending ? "Creating account..." : "Open My Account"}
+
+            {/* Exibição do Erro */}
+            {error && (
+              <p className="text-red-500 text-sm font-medium">{error}</p>
+            )}
+
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="w-full bg-emerald-500 text-black font-bold"
+            >
+              {isPending ? "Autenticando..." : "Entrar na Nexum"}
             </Button>
           </form>
         </CardContent>

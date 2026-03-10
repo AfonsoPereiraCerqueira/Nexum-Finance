@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 
 // Importações do shadcn/ui
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,9 @@ export default function Navbar() {
     { label: "Security", href: "#security", name: "security" },
     { label: "About", href: "#about", name: "about" },
   ];
+
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
 
   return (
     <nav className="bg-background w-full h-16 text-white flex items-center px-4 border-b border-emerald-500 font-sans sticky top-0 z-50">
@@ -57,13 +61,21 @@ export default function Navbar() {
       {/* 3. LADO DIREITO: Login + Sheet para Mobile */}
       <div className="flex-1 flex justify-end gap-4 items-center">
         <a href="/login">
-          <Button
-            variant="ghost"
-            className="hidden md:flex text-sm font-medium transition-all hover:scale-105 hover:text-emerald-500"
-          >
-            
+          {(session && (
+            <Button
+              variant="ghost"
+              className="hidden md:flex text-sm font-medium transition-all hover:scale-105 hover:text-emerald-500"
+            >
+              Dashboard
+            </Button>
+          )) || (
+            <Button
+              variant="ghost"
+              className="hidden md:flex text-sm font-medium transition-all hover:scale-105 hover:text-emerald-500"
+            >
               Login
-          </Button>
+            </Button>
+          )}
         </a>
 
         {/* MENU MOBILE (Sheet do shadcn) */}
